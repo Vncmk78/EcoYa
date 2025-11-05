@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'Producto',
 ]
 
 MIDDLEWARE = [
@@ -75,8 +76,8 @@ WSGI_APPLICATION = 'EcoYa_Django.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "mydatabase",
-        "USER": "mydatabaseuser",
+        "NAME": "ECOYA",
+        "USER": "Bastian",
         "PASSWORD": "admin1234.",
         "HOST": "127.0.0.1",
         "PORT": "5432",
