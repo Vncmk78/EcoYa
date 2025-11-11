@@ -1,0 +1,9 @@
+# Entorno Virtual
+.venv/
+
+# Base de datos local de Django (¡No subir!)
+db.sqlite3
+
+# Caché de Python (Lo que te molesta)
+__pycache__/
+*.pyc
