@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Mapa - EcoYa{% endblock %}
+
+{% block extra_head %}
+<script>
+function initMap() {
+
+    // Límites aproximados de Temuco (rectángulo)
+    const temucoBounds = {
+        north: -38.6800,
+        south: -38.8000,
+        east: -72.5200,
+        west: -72.7000
+    };
+
+    const temucoCentro = { lat: -38.7359, lng: -72.5908 };
+
+    const map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 13,
+        center: temucoCentro,
+
+        // Evita que salga del área
+        restriction: {
+            latLngBounds: temucoBounds,
+            strictBounds: true
+        },
+
+        // Opcional: evita zoom muy lejos
+        minZoom: 12,
+        maxZoom: 17,
+    });
+
+    new google.maps.Marker({
+        position: temucoCentro,
+        map: map,
+        title: "Temuco",
+    });
+}
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCyoUpnQ3pwz0CRIHVvM-Yy3LZzq7XiG4k&callback=initMap" async defer></script>
+
+{% endblock %}
+
+{% block content %}
+<h2>Mapa de Temuco</h2>
+<p>Aquí puedes encontrar los puntos verdes de reciclaje cercanos.</p>
+
+<div id="map" style="width:100%; height:500px; border:1px solid #ccc;"></div>
+{% endblock %}
