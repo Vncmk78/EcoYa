@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Contacto - EcoYa{% endblock %}
+
+{% block content %}
+<h2>Contacto</h2>
+<p>Si necesitas ayuda, puedes comunicarte con nuestros voluntarios.</p>
+
+<form class="contact-form">
+    <label>Nombre:</label>
+    <input type="text" placeholder="Tu nombre">
+
+    <label>Email:</label>
+    <input type="email" placeholder="Tu correo">
+
+    <label>Mensaje:</label>
+    <textarea placeholder="Escribe tu mensaje"></textarea>
+
+    <button>Enviar</button>
+</form>
+{% endblock %}

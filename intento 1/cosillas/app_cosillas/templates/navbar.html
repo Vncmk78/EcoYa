@@ -1,0 +1,28 @@
+{% load static %}
+<nav class="navbar">
+
+    <!-- Logo + texto -->
+    <div class="logo-container">
+        <img src="{% static 'app_cosillas/img/logo.jpg' %}" class="logo-img" alt="EcoYa">
+        <span class="logo-text">EcoYa</span>
+    </div>
+
+    <!-- Botón hamburguesa -->
+    <button class="hamburger" onclick="toggleMenu()">☰</button>
+
+    <!-- Menú -->
+    <ul class="nav-links" id="navMenu">
+        <li><a href="/inicio/">Inicio</a></li>
+        <li><a href="/mapa/">Mapa</a></li>
+        <li><a href="/puntos/">Puntos Verdes</a></li>
+        <li><a href="/contacto/">Contacto</a></li>
+    </ul>
+
+</nav>
+
+<script>
+function toggleMenu() {
+    const menu = document.getElementById("navMenu");
+    menu.classList.toggle("active");
+}
+</script>
