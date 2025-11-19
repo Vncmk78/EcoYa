@@ -4,23 +4,42 @@
 
 {% block extra_head %}
 <script>
-    function initMap() {
-        const temuco = { lat: -38.7359, lng: -72.5908 };
+function initMap() {
 
-        const map = new google.maps.Map(document.getElementById("map"), {
-            zoom: 12,
-            center: temuco,
-        });
+    // Límites aproximados de Temuco (rectángulo)
+    const temucoBounds = {
+        north: -38.6800,
+        south: -38.8000,
+        east: -72.5200,
+        west: -72.7000
+    };
 
-        new google.maps.Marker({
-            position: temuco,
-            map: map,
-            title: "Punto verde ubicado aquí",
-        });
-    }
+    const temucoCentro = { lat: -38.7359, lng: -72.5908 };
+
+    const map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 13,
+        center: temucoCentro,
+
+        // ⛔ Evita que salga del área
+        restriction: {
+            latLngBounds: temucoBounds,
+            strictBounds: true
+        },
+
+        // Opcional: evita zoom muy lejos
+        minZoom: 12,
+        maxZoom: 17,
+    });
+
+    new google.maps.Marker({
+        position: temucoCentro,
+        map: map,
+        title: "Temuco",
+    });
+}
 </script>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=TU_API_KEY&callback=initMap" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCyoUpnQ3pwz0CRIHVvM-Yy3LZzq7XiG4k&callback=initMap" async defer></script>
 
 {% endblock %}
 
