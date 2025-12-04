@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Solicitar EcoRider - EcoYa{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'app_cosillas/style_ecorider.css' %}">
+
+<div class="container">
+    <h2>Solicitar EcoRider</h2>
+    <p>Completa el formulario para solicitar el retiro de tus materiales reciclables.</p>
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>
+            {{ message }}
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <form method="post" class="form-container">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Enviar Solicitud</button>
+    </form>
+</div>
+
+{% endblock %}
