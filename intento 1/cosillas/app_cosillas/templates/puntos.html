@@ -1,14 +1,122 @@
-{% extends 'base.html' %}
-
-{% block title %}Puntos Verdes - EcoYa{% endblock %}
+{% extends "base.html" %}
+{% load static %}
 
 {% block content %}
-<h2>Puntos Verdes de Reciclaje</h2>
-<p>Aquí encontrarás los lugares autorizados para reciclar en Temuco.</p>
 
-<ul>
-    <li>Punto verde 1 — Dirección X, Temuco</li>
-    <li>Punto verde 2 — Dirección Y, Temuco</li>
-    <li>Punto verde 3 — Dirección Z, Temuco</li>
-</ul>
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+<link rel="stylesheet" href="{% static 'app_cosillas/style_puntos.css' %}">
+
+<div class="container">
+    <h2>Puntos Verdes de Reciclaje</h2>
+    <p>Haz clic en el mapa para agregar un nuevo punto de reciclaje o visualizar los existentes.</p>
+
+    <div id="map"></div>
+
+    <div class="form-container">
+        <h3>Agregar Nuevo Punto</h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Guardar Punto</button>
+        </form>
+    </div>
+
+    <h3>Listado de Puntos</h3>
+    <ul>
+        {% for punto in puntos %}
+        <li>
+            <strong>{{ punto.nombre }}</strong>:
+            {{ punto.descripcion }}
+            ({{ punto.latitud }}, {{ punto.longitud }})
+            <br>
+            <small>
+                Confirmado por {{ punto.confirmaciones }} usuarios.
+                Reportado inexistente por {{ punto.reportes }} usuarios.
+            </small>
+        </li>
+        {% empty %}
+        <li>No hay puntos registrados aún.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="">
+</script>
+
+<script src="{% static 'app_cosillas/script_puntos.js' %}"></script>
+
+<!-- 🔥 (1) Lista de puntos que necesitan verificación -->
+<script>
+    const puntos_necesitan = [
+        {% for p in puntos_necesitan %}
+        {
+            id: {{ p.id }},
+            nombre: "{{ p.nombre }}",
+            lat: {{ p.latitud }},
+            lng: {{ p.longitud }}
+        },
+        {% endfor %}
+    ];
+</script>
+
+<script>
+
+    // 1. Crear lista de puntos que necesitan verificación (desde Django → JS)
+    const puntos_necesitan = JSON.parse('{{ puntos_necesitan_json|safe }}');
+
+    // 2. Función para enviar confirmación
+    function verificarPunto(puntoId, existe) {
+        fetch(`/verificar_punto/${puntoId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: `existe=${existe}`
+        })
+        .then(response => {
+            if (response.ok) {
+                alert("Gracias por verificar!");
+                location.reload();
+            } else {
+                alert("Error, necesitas iniciar sesión.");
+            }
+        });
+    }
+
+    // 3. Dibujar los puntos uno por uno
+    {% for punto in puntos %}
+    let marcador = L.marker([
+        {{ punto.latitud|stringformat:"%.6f" }},
+        {{ punto.longitud|stringformat:"%.6f" }}
+    ]).addTo(map);
+
+    let necesita = puntos_necesitan.some(p => p.id === {{ punto.id }});
+
+    if (necesita) {
+        marcador.bindPopup(`
+            <b>{{ punto.nombre }}</b><br>
+            {{ punto.descripcion }}<br>
+            <hr>
+            <p><b>¿Este punto existe realmente?</b></p>
+            <button onclick="verificarPunto({{ punto.id }}, true)" class="btn btn-sm btn-success">Sí, existe</button>
+            <button onclick="verificarPunto({{ punto.id }}, false)" class="btn btn-sm btn-danger">No existe</button>
+            <br>
+            <small>Confirmado: {{ punto.confirmaciones }} | Reportado: {{ punto.reportes }}</small>
+        `);
+    } else {
+        marcador.bindPopup(`
+            <b>{{ punto.nombre }}</b><br>
+            {{ punto.descripcion }}<br>
+            <small>Confirmado: {{ punto.confirmaciones }} | Reportado: {{ punto.reportes }}</small>
+        `);
+    }
+    {% endfor %}
+
+</script>
 {% endblock %}
